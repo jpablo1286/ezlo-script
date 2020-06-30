@@ -65,9 +65,9 @@ if [ "$?" != 0 ];then
         echo "Something fail ... exiting."
         exit 0
 fi
-SIZEF=`aws s3 ls s3://ezlo-test/2906202145-ezlo-test.raw --human-readable --summarize | grep "Total Size:" | awk '{print $3}'`
-SIZEI=${FLOAT%.*}
-
+SIZEF=`aws s3 ls s3://$S3BUCKET/$SDATE-ezlo-test.raw --human-readable --summarize | grep "Total Size:" | awk '{print $3}'`
+SIZEI=${SIZEF%.*}
+echo "El snapshot tine un tamaño de $SIZEI GB"
 echo "EC2 - Generationg json for import snapshot"
 cat <<EOF > $SDATE-$BNAME.json
 {
@@ -134,6 +134,10 @@ do
         sleep 5s
 done
 
-echo "Migration DONE you can SSH to $PUBLICIP or browse http://$PUBLICIP"
+echo "Cleaning Up ..."
+rm $SDATE-$BNAME.json
+rm $SDATE-ezlo-test.raw
+sshpass -p "$RPASS" ssh root@$PVEIP "rm $DUMPDIR/$SDATE-ezlo-test.raw"
 
+echo "Migration DONE you can SSH to $PUBLICIP or browse http://$PUBLICIP"
 
