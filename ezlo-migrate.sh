@@ -107,6 +107,7 @@ done
 echo "Registring snapshot as AMI ..."
 REGISTERCMD=`aws ec2 register-image --name $SDATE-$BNAME --virtualization-type hvm --root-device-name /dev/sda1 --block-device-mappings "[{\"DeviceName\": \"/dev/sda1\",\"Ebs\": {\"SnapshotId\": \"$SNAPID\",\"VolumeSize\": $SIZEI,\"DeleteOnTermination\": true,\"VolumeType\": \"gp2\"}}]"`
 AMIID=`echo $REGISTERCMD | grep -oP '(?<="ImageId": ")[^"]*'`
+echo "AMI Created with ID $AMIID"
 echo "Creating Security Group ..."
 aws ec2 create-security-group --group-name $SDATE-$BNAME-SG --description "Security Group for smokeping"
 sleep 3s
